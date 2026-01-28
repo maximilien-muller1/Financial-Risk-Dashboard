@@ -27,7 +27,7 @@ Contrairement aux outils classiques qui se focalisent sur la performance passée
     * *Smart Exposure :* Stratégie adaptative basée sur la détection de régimes de risque par IA.
 * **IA / Machine Learning :** Utilisation d'algorithmes de Clustering (K-Means / GMM) pour détecter automatiquement les régimes de marché (Calme vs Risqué).
 
-## 🛠 Stack Technique
+## Stack Technique
 
 * **Langage :** Python 3.9+
 * **Interface Web :** Streamlit
@@ -36,7 +36,7 @@ Contrairement aux outils classiques qui se focalisent sur la performance passée
 * **Machine Learning :** Scikit-learn
 * **Statistiques :** SciPy
 
-## 📂 Structure du Projet
+## Structure du Projet
 
 ```text
 ├── data/               # Données locales (cache)
