@@ -8,24 +8,22 @@
 
 ## Description :
 
-Ce projet est une application interactive qui permet aux nouveaux investisseurs de mieux comprendre le couple **Rendement / Risque**. 
+Ce projet est une application interactive qui permet de mieux comprendre le couple **Rendement / Risque**. 
 
-Contrairement aux outils classiques qui se focalisent sur la performance passée, cette application met l'accent sur :
+Cette application met l'accent sur :
 1.  La **quantification du risque** (au-delà de la simple volatilité).
-2.  La **simulation de scénarios futurs** (Monte Carlo) pour visualiser l'incertitude.
-3.  La **comparaison de stratégies** (DCA vs Investissement unique) dans des conditions de marché réalistes.
+2.  La **simulation de scénarios futurs** (Monte Carlo) pour visualiser l'incertitude en utilisant une méthode de Bootstrapping.
+3.  La **comparaison de stratégies** (DCA vs Investissement unique).
 
-**Philosophie :** L'objectif n'est pas de *prédire* le prix futur d'un actif, mais d'analyser statistiquement son comportement pour prendre des décisions éclairées.
-
+L'objectif n'est pas de *prédire* le prix futur d'un actif, mais d'analyser statistiquement son comportement passé et évaluer la meilleur stratégie d'investissement.
 ## Fonctionnalités Clés
 
 * **Dashboard d'Analyse :** Récupération automatique des données (Yahoo Finance) et calcul des métriques financières (Rendements Log, Volatilité Glissante, Max Drawdown, VaR).
-* **Laboratoire de Simulation :** Génération de milliers de scénarios futurs probables via des méthodes de Monte Carlo (Mouvement Brownien Géométrique) pour créer des cônes d'incertitude.
+* **Laboratoire de Simulation :** Génération de scénarios futurs probables via des méthodes de Monte Carlo (Mouvement Brownien Géométrique) pour créer des cônes d'incertitude.
 * **Comparateur de Stratégies :** Backtesting interactif :
     * *Lump Sum :* Investissement unique.
     * *DCA (Dollar Cost Averaging) :* Investissement programmé.
     * *Smart Exposure :* Stratégie adaptative basée sur la détection de régimes de risque par IA.
-* **IA / Machine Learning :** Utilisation d'algorithmes de Clustering (K-Means / GMM) pour détecter automatiquement les régimes de marché (Calme vs Risqué).
 
 ## Stack Technique
 
@@ -33,7 +31,6 @@ Contrairement aux outils classiques qui se focalisent sur la performance passée
 * **Interface Web :** Streamlit
 * **Data & Finance :** Pandas, NumPy, Yfinance
 * **Visualisation :** Plotly (Graphiques interactifs), Matplotlib
-* **Machine Learning :** Scikit-learn
 * **Statistiques :** SciPy
 
 ## Structure du Projet
