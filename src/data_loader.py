@@ -6,46 +6,47 @@ import streamlit as st
 @st.cache_data
 def load_data(ticker_symbol, start_date, end_date):
     """
-    Récupère les données via l'objet Ticker.
+    Fetches data via the yfinance Ticker object.
     """
-    print(f" Chargement des données pour {ticker_symbol}...")
+    print(f" Loading data for {ticker_symbol}...")
 
-    # 1. On crée l'objet Ticker
+    # 1. Create Ticker object
     ticker_obj = yf.Ticker(ticker_symbol)
 
-    # 2. On récupère l'historique
-    # Note : par défaut, .history() ajuste déjà le prix (auto_adjust=True)
+    # 2. Fetch history
+    # Note: .history() auto-adjusts price by default (auto_adjust=True)
     df = ticker_obj.history(start=start_date, end=end_date)
 
-    # Vérification de sécurité : si le tableau est vide (mauvaise date ou mauvais ticker)
+    # Safety check: if dataframe is empty (wrong date or ticker)
     if df.empty:
         raise ValueError(
-            f"Aucune donnée trouvée pour {ticker_symbol}. Vérifie le nom ou les dates."
+            f"No data found for {ticker_symbol}. Check the symbol or dates."
         )
 
-    # 3. Sélection propre
-    # Avec cette méthode, la colonne s'appelle toujours 'Close' et elle est déjà ajustée
+    # 3. Clean selection
+    # With this method, the column is always named 'Close' and is adjusted
     df = df[["Close"]]
 
-    # On renomme en 'Price'
+    # Rename to 'Price'
     df.columns = ["Price"]
 
-    # 4. Calcul des Rendements Logarithmiques
+    # 4. Calculate Log Returns
     df["Log_Returns"] = np.log(df["Price"] / df["Price"].shift(1))
 
-    # 5. Nettoyage
+    # 5. Cleaning
     df.dropna(inplace=True)
 
     return df
 
 
-# --- Bloc de test ---
+# --- Test Block ---
 if __name__ == "__main__":
     try:
-        # Test sur le SPY
+        # Test on SPY
         data = load_data("SPY", "2023-01-01", "2023-12-31")
-        print("\nSUCCÈS : Données récupérées !")
+        print("\nSUCCESS: Data fetched!")
         print(data.head())
-        print(f"\nVolatilité (test) : {data['Log_Returns'].std() * (252**0.5):.2%}")
+        # Annualized Volatility Test
+        print(f"\nVolatility (test): {data['Log_Returns'].std() * (252**0.5):.2%}")
     except Exception as e:
-        print(f"\nERREUR : {e}")
+        print(f"\nERROR: {e}")
