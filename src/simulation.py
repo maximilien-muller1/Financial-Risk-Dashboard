@@ -3,32 +3,34 @@ import pandas as pd
 
 def monte_carlo_simulation(last_price, historical_returns, n_days, n_simulations):
     """
-    Simule des prix futurs avec Bootstrapping ET ajustement de tendance (Avec taux sans risque).
+    Simulates future prices using Bootstrapping AND trend adjustment (Drift).
+    Uses a risk-free rate assumption to neutralize historical bias.
     """
     
-    # 1. Nettoyage
+    # 1. Cleaning
     hist_returns = historical_returns.dropna().values
     
-    # On calcule la moyenne quotidienne historique (qui est trop élevée actuellement)
+    # Calculate historical daily mean 
     mu_historical = np.mean(hist_returns)
     
-    # On impose une tendance (5% par an ; Taux sans risque) 
+    # Impose a conservative trend (5% per year; Risk-free rate proxy)
     conservative_drift = 0.05 / 252 
     
-    # On AJUSTE l'historique :
-   
+    # ADJUST history:
+    # Subtract past excess returns, add conservative drift
     adjusted_returns = hist_returns - mu_historical + conservative_drift
 
-    #  Tirage au sort sur les rendements AJUSTÉS
+    # Random sampling from ADJUSTED returns (Bootstrapping)
     random_returns = np.random.choice(adjusted_returns, size=(n_days, n_simulations))
     
-    # Reconstruction
+    # Path Reconstruction
     cumulative_returns = np.cumsum(random_returns, axis=0)
     simulation_paths = last_price * np.exp(cumulative_returns)
     
-    # Mise en forme
+    # Formatting to DataFrame
     simulation_df = pd.DataFrame(simulation_paths)
     
+    # Add start row (Day 0)
     start_row = pd.DataFrame([[last_price] * n_simulations])
     simulation_df = pd.concat([start_row, simulation_df]).reset_index(drop=True)
     
