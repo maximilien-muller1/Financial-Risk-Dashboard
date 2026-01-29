@@ -4,13 +4,13 @@ import pandas as pd
 
 def calculate_annual_volatility(log_returns):
     """
-    Calcule la volatilité annualisée.
-    Formule : Écart-type journalier * Racine(252 jours de bourse)
+    Calculates annualized volatility.
+    Formula: Daily Standard Deviation * Sqrt(252 trading days)
     """
-    # .std() calcule l'écart-type (la dispersion autour de la moyenne)
+    # .std() calculates standard deviation (dispersion around the mean)
     daily_vol = log_returns.std()
 
-    # On multiplie par racine de 252 car il y a environ 252 jours de bourse par an
+    # Multiply by sqrt(252) because there are approx. 252 trading days per year
     annual_vol = daily_vol * np.sqrt(252)
 
     return annual_vol
@@ -18,15 +18,15 @@ def calculate_annual_volatility(log_returns):
 
 def calculate_max_drawdown(prices):
     """
-    Calcule la perte maximale historique (du sommet au creux).
+    Calculates the maximum historical drawdown (peak to trough).
     """
-    # 1. On cherche le prix maximum atteint jusqu'à maintenant (Running Max)
+    # 1. Calculate the running maximum price up to now
     rolling_max = prices.cummax()
 
-    # 2. On calcule la différence actuel par rapport à l'ATH
+    # 2. Calculate current drawdown relative to the peak (ATH)
     drawdown = (prices - rolling_max) / rolling_max
 
-    # 3. Le Max Drawdown = valeur la plus basse (tjrs négative)
+    # 3. Max Drawdown = the lowest value (always negative)
     max_dd = drawdown.min()
 
     return max_dd
@@ -34,9 +34,9 @@ def calculate_max_drawdown(prices):
 
 def calculate_var_95(log_returns):
     """
-    Calcule la Value at Risk (VaR) historique à 95%.
-    "Dans les 5% pires cas, combien je perds ?"
+    Calculates the historical Value at Risk (VaR) at 95%.
+    "In the worst 5% of cases, how much do I lose?"
     """
-    # On trie les rendements du pire au meilleur et on prend celui à la limite des 5%
+    # Sort returns from worst to best and find the value at the 5% threshold
     var_95 = np.percentile(log_returns, 5)
     return var_95
