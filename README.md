@@ -1,47 +1,47 @@
-# Analyseur de Risque & Stratégies d'Investissement
+# Financial Risk & Investment Strategy Analyzer
 
-> **Un outil Data-Driven pour visualiser l'incertitude des marchés financiers.**
+> **A Data-Driven tool to visualize financial market uncertainty.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat&logo=Streamlit&logoColor=white)](https://streamlit.io/)
 
-## Description :
+## Description
 
-Ce projet est une application interactive qui permet de mieux comprendre le couple **Rendement / Risque**. 
+This project is an interactive dashboard designed to provide a deeper understanding of the **Risk/Return trade-off**.
 
-Cette application met l'accent sur :
-1.  La **quantification du risque** (au-delà de la simple volatilité).
-2.  La **simulation de scénarios futurs** (Monte Carlo) pour visualiser l'incertitude en utilisant une méthode de Bootstrapping.
-3.  La **comparaison de stratégies** (DCA vs Investissement unique).
+The application focuses on three main pillars:
+1.  **Risk Quantification:** Going beyond simple volatility metrics.
+2.  **Future Scenario Simulation:** Using Monte Carlo simulations (Bootstrapping) to visualize uncertainty.
+3.  **Strategy Comparison:** Backtesting investment methods (DCA vs. Lump Sum).
 
-L'objectif n'est pas de *prédire* le prix futur d'un actif, mais d'analyser statistiquement son comportement passé et évaluer la meilleur stratégie d'investissement.
-## Fonctionnalités Clés
+The goal is not to *predict* the future price of an asset, but to statistically analyze its past behavior to evaluate the best investment strategy.
 
-* **Dashboard d'Analyse :** Récupération automatique des données (Yahoo Finance) et calcul des métriques financières (Rendements Log, Volatilité Glissante, Max Drawdown, VaR).
-* **Laboratoire de Simulation :** Génération de scénarios futurs probables via des méthodes de Monte Carlo (Mouvement Brownien Géométrique) pour créer des cônes d'incertitude.
-* **Comparateur de Stratégies :** Backtesting interactif :
-    * *Lump Sum :* Investissement unique.
-    * *DCA (Dollar Cost Averaging) :* Investissement programmé.
-    * *Smart Exposure :* Stratégie adaptative basée sur la détection de régimes de risque par IA.
+## Key Features
 
-## Stack Technique
+* **Analysis Dashboard:** Automatic data fetching (Yahoo Finance) and calculation of key financial metrics (Log Returns, Rolling Volatility, Max Drawdown, Value at Risk).
+* **Simulation Lab:** Generation of probable future scenarios via Monte Carlo methods (Historical Bootstrapping) to visualize uncertainty cones and potential outcomes.
+* **Strategy Comparator:** Interactive backtesting engine:
+    * *Lump Sum:* All-in investment.
+    * *DCA (Dollar Cost Averaging):* Periodic scheduled investment.
 
-* **Langage :** Python 3.9+
-* **Interface Web :** Streamlit
-* **Data & Finance :** Pandas, NumPy, Yfinance
-* **Visualisation :** Plotly (Graphiques interactifs), Matplotlib
-* **Statistiques :** SciPy
+## Tech Stack
 
-## Structure du Projet
+* **Language:** Python 3.9+
+* **Web Interface:** Streamlit
+* **Data & Finance:** Pandas, NumPy, Yfinance
+* **Visualization:** Plotly (Interactive charts), Matplotlib
+* **Statistics:** SciPy
+
+## Project Structure
 
 ```text
-├── data/               # Données locales (cache)
-├── src/                # Code source modulaire
-│   ├── data_loader.py  # Récupération et nettoyage des données
-│   ├── indicators.py   # Calculs financiers (Volatilité, Drawdown, VaR)
-│   ├── simulation.py   # Moteur de simulation Monte Carlo
-│   └── strategies.py   # Logique de backtesting des portefeuilles
-├── app.py              # Point d'entrée de l'application Streamlit
-├── requirements.txt    # Dépendances du projet
+├── data/               # Local data storage (cache)
+├── src/                # Modular source code
+│   ├── data_loader.py  # Data fetching and cleaning
+│   ├── indicators.py   # Financial metrics (Volatility, Drawdown, VaR, Beta)
+│   ├── simulation.py   # Monte Carlo simulation engine (Bootstrapping)
+│   └── strategies.py   # Portfolio backtesting logic
+├── app.py              # Streamlit application entry point
+├── requirements.txt    # Project dependencies
 └── README.md           # Documentation
