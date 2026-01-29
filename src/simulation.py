@@ -7,7 +7,7 @@ def monte_carlo_simulation(last_price, historical_returns, n_days, n_simulations
     Uses a risk-free rate assumption to neutralize historical bias.
     """
     
-    # 1. Cleaning
+    # Cleaning
     hist_returns = historical_returns.dropna().values
     
     # Calculate historical daily mean 
