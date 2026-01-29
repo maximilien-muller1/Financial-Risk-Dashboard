@@ -20,13 +20,13 @@ def calculate_max_drawdown(prices):
     """
     Calculates the maximum historical drawdown (peak to trough).
     """
-    # 1. Calculate the running maximum price up to now
+    # Calculate the running maximum price up to now
     rolling_max = prices.cummax()
 
-    # 2. Calculate current drawdown relative to the peak (ATH)
+    # Calculate current drawdown relative to the peak (ATH)
     drawdown = (prices - rolling_max) / rolling_max
 
-    # 3. Max Drawdown = the lowest value (always negative)
+    # Max Drawdown = the lowest value (always negative)
     max_dd = drawdown.min()
 
     return max_dd
