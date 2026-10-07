@@ -25,6 +25,33 @@ The goal is not to *predict* the future price of an asset, but to statistically 
     * *Lump Sum:* All-in investment.
     * *DCA (Dollar Cost Averaging):* Periodic scheduled investment.
 
+## Quick Start
+
+```bash
+git clone https://github.com/maximilien-muller1/Financial-Risk-Dashboard.git
+cd Financial-Risk-Dashboard
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Enter a ticker (e.g. `SPY`, `AAPL`, `BTC-USD`), pick a date range and click **Run Analysis**.
+
+## How it works
+
+* **Risk indicators:** annualised volatility (daily std × √252), maximum drawdown (peak to trough) and historical 95 % Value at Risk (5th percentile of daily log returns).
+* **Monte Carlo:** daily returns are resampled with replacement (bootstrap). The historical mean is removed and replaced by a conservative 5 % annual drift, so the cone of scenarios does not simply extrapolate past performance.
+* **DCA vs Lump Sum:** Lump Sum buys on the first day. DCA splits the same amount into equal weekly purchases on a chosen weekday. Uninvested cash is counted in the portfolio value, so both strategies are compared on the same capital.
+
+## Limitations
+
+* Value at Risk is **historical** only (no parametric or Monte Carlo VaR, and no backtesting of the VaR itself).
+* The bootstrap draws returns independently, so it ignores volatility clustering and fat-tail dynamics.
+* The 5 % drift is a fixed assumption, not an estimate. No transaction costs or taxes are modelled.
+* Data comes from Yahoo Finance via `yfinance`, so availability depends on that service.
+
+This is an educational tool, not investment advice.
+
 ## Tech Stack
 
 * **Language:** Python 3.9+
@@ -36,10 +63,9 @@ The goal is not to *predict* the future price of an asset, but to statistically 
 ## Project Structure
 
 ```text
-├── data/               # Local data storage (cache)
 ├── src/                # Modular source code
 │   ├── data_loader.py  # Data fetching and cleaning
-│   ├── indicators.py   # Financial metrics (Volatility, Drawdown, VaR, Beta)
+│   ├── indicators.py   # Financial metrics (Volatility, Drawdown, VaR)
 │   ├── simulation.py   # Monte Carlo simulation engine (Bootstrapping)
 │   └── strategies.py   # Portfolio backtesting logic
 ├── app.py              # Streamlit application entry point
