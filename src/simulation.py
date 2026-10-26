@@ -4,7 +4,8 @@ import pandas as pd
 def monte_carlo_simulation(last_price, historical_returns, n_days, n_simulations):
     """
     Simulates future prices using Bootstrapping AND trend adjustment (Drift).
-    Uses a risk-free rate assumption to neutralize historical bias.
+    The historical mean is replaced by a fixed, conservative drift so that the
+    simulation does not simply extrapolate past performance.
     """
     
     # Cleaning
@@ -13,7 +14,7 @@ def monte_carlo_simulation(last_price, historical_returns, n_days, n_simulations
     # Calculate historical daily mean 
     mu_historical = np.mean(hist_returns)
     
-    # Impose a conservative trend (5% per year; Risk-free rate proxy)
+    # Impose a conservative trend (5% per year, a fixed assumption)
     conservative_drift = 0.05 / 252 
     
     # ADJUST history:

@@ -10,6 +10,8 @@ from src.indicators import (
 )
 from src.simulation import monte_carlo_simulation
 from src.strategies import backtest_dca_vs_lump_sum
+from src.backtesting import backtest_var
+import numpy as np
 
 
 # Page Configuration
@@ -100,7 +102,15 @@ if "data" in st.session_state:
         
         with col_g2:
             st.markdown("#### Returns Distribution")
-            st.bar_chart(data["Log_Returns"])
+            # Histogram: how often each range of daily returns occurred
+            counts, edges = np.histogram(data["Log_Returns"], bins=50)
+            centers = (edges[:-1] + edges[1:]) / 2
+            hist_df = pd.DataFrame(
+                {"Frequency": counts},
+                # Numeric index (in %) so the bins stay in order on the x axis
+                index=pd.Index(np.round(centers * 100, 2), name="Daily log return (%)"),
+            )
+            st.bar_chart(hist_df)
 
         with st.expander("View Raw Data"):
             st.write(data)
@@ -129,18 +139,19 @@ if "data" in st.session_state:
             # Chart Display
             chart_data = pd.DataFrame()
             
-            chart_data['Worst Case'] = sim_data.min(axis=1)      # Bottom line
-            chart_data['Expected Mean'] = sim_data.mean(axis=1)  # Middle line
-            chart_data['Best Case'] = sim_data.max(axis=1)       # Top line
+            # Percentiles across simulations for each day (a 90 % confidence cone)
+            chart_data['Pessimistic (5th pct)'] = sim_data.quantile(0.05, axis=1)
+            chart_data['Median'] = sim_data.median(axis=1)
+            chart_data['Optimistic (95th pct)'] = sim_data.quantile(0.95, axis=1)
             
             # Display only these 3 lines
             st.line_chart(chart_data)
 
             # Statistical Calculations
             final_prices = sim_data.iloc[-1]
-            mean_final = final_prices.mean()
-            min_final = final_prices.min()
-            max_final = final_prices.max()
+            mean_final = final_prices.median()
+            min_final = final_prices.quantile(0.05)
+            max_final = final_prices.quantile(0.95)
 
             # Percentage calculations
             progression_mean = (mean_final - last_price) / last_price
@@ -151,17 +162,17 @@ if "data" in st.session_state:
             col_pred1, col_pred2, col_pred3 = st.columns(3)
             
             col_pred1.metric(
-                "Expected Mean",
+                "Median",
                 f"{mean_final:.2f} $",
                 f"{progression_mean:.2%}"
             )
             col_pred2.metric(
-                "Worst Case (Crash)",
+                "Pessimistic (5th pct)",
                 f"{min_final:.2f} $",
                 f"{progression_min:.2%}"
             )
             col_pred3.metric(
-                "Best Case",
+                "Optimistic (95th pct)",
                 f"{max_final:.2f} $",
                 f"{progression_max:.2%}"
             )
@@ -195,6 +206,55 @@ if "data" in st.session_state:
                     # Rerun
                     st.rerun()
                     
+
+        # VAR BACKTESTING
+        st.markdown("---")
+        st.subheader("Value at Risk Backtesting")
+        st.markdown(
+            "Each day, the VaR is estimated from the previous days only, then compared "
+            "with the actual return. A **breach** is a day where the loss exceeds the VaR."
+        )
+
+        col_bt1, col_bt2, col_bt3 = st.columns(3)
+        with col_bt1:
+            bt_method = st.selectbox("VaR Method", ["historical", "parametric"], key="bt_method")
+        with col_bt2:
+            bt_conf = st.selectbox("Confidence Level", [0.95, 0.99], format_func=lambda c: f"{c:.0%}", key="bt_conf")
+        with col_bt3:
+            bt_window = st.slider("Estimation Window (days)", 60, 500, 250, 10, key="bt_window")
+
+        if len(data) <= bt_window + 20:
+            st.warning("Not enough data for this window. Pick a longer date range or a shorter window.")
+        else:
+            bt_df, bt_stats = backtest_var(data["Log_Returns"], bt_window, bt_conf, bt_method)
+
+            col_k1, col_k2, col_k3, col_k4 = st.columns(4)
+            col_k1.metric("Days Tested", bt_stats["observations"])
+            col_k2.metric("Breaches (observed)", bt_stats["breaches"])
+            col_k3.metric("Breaches (expected)", f"{bt_stats['expected_breaches']:.1f}")
+            col_k4.metric(
+                "Kupiec p-value",
+                f"{bt_stats['kupiec_p_value']:.3f}",
+                help="Tests whether the breach rate matches the expected rate. Below 0.05, the model is rejected.",
+            )
+
+            if bt_stats["model_rejected"]:
+                too_many = bt_stats["breaches"] > bt_stats["expected_breaches"]
+                st.error(
+                    "Model rejected at the 5 % level: "
+                    + ("too many breaches, the VaR underestimates risk." if too_many
+                       else "too few breaches, the VaR is overly conservative.")
+                )
+            else:
+                st.success("Model not rejected: the breach rate is consistent with the confidence level.")
+
+            chart_bt = bt_df[["Log_Returns", "VaR"]].rename(
+                columns={"Log_Returns": "Daily Log Return", "VaR": f"VaR {bt_conf:.0%} ({bt_method})"}
+            )
+            st.line_chart(chart_bt)
+
+            with st.expander("View breach days"):
+                st.write(bt_df[bt_df["Breach"]])
 
         st.markdown("---")
         st.subheader("Strategy Comparator: DCA vs Lump Sum")
